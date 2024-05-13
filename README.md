@@ -161,7 +161,7 @@ Esse método muda o endereço aberto no driver do selenium.
 ```python
 automation = Automation(**params)
 automation.start_browser()
-automation.switch_url('https://www.google.com.br')
+automation.switch_url('https://github.com/')
 ```
 
 ### `back_to_initial_site(self) -> None`
