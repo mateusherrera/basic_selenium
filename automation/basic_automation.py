@@ -6,6 +6,10 @@ a biblioteca Selenium.
 :date: 2024-04-26
 """
 
+# Bibliotecas
+from os import getenv, path
+from time import sleep
+
 # Selenium
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.support import expected_conditions as ec
@@ -17,10 +21,6 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-
-# Bibliotecas
-from os import getenv, path
-from time import sleep
 
 
 class BasicAutomation:
@@ -35,6 +35,8 @@ class BasicAutomation:
     selenium_wait_time: int
 
     chrome_driver_path: str
+    chrome_exe_path: str
+
     driver: WebDriver
     wait: WebDriverWait
 
@@ -46,7 +48,8 @@ class BasicAutomation:
                  selenium_initial_site: str,
                  selenium_wait_time: int,
                  chrome_driver_directory: str = None,
-                 chrome_driver_file: str = 'chromedriver.exe'
+                 chrome_driver_file: str = 'chromedriver.exe',
+                 chrome_exe_path: str = None
                  ):
         """
         Construtor da Classe.
@@ -55,29 +58,29 @@ class BasicAutomation:
         :param selenium_wait_time: Tempo de espera do selenium.
         :param chrome_driver_directory: Caminho do chromedriver.
         :param chrome_driver_file: Nome do arquivo chromedriver.
+        :param chrome_exe_path: Caminho do executável do Chrome.
         """
 
         if chrome_driver_directory is None:
             env_path = getenv('PyPath')
 
             if env_path is None:
-                raise Exception(
-                    'Variável de ambiente "PyPath" não está definida.')
+                raise KeyError('Variável de ambiente "PyPath" não está definida.')
 
             else:
                 chrome_driver_path = path.join(env_path, chrome_driver_file)
 
         else:
-            chrome_driver_path = path.join(
-                chrome_driver_directory, chrome_driver_file)
+            chrome_driver_path = path.join(chrome_driver_directory, chrome_driver_file)
 
-        self.chrome_driver_path = chrome_driver_path
         self.selenium_wait_time = selenium_wait_time
         self.selenium_initial_site = selenium_initial_site
 
+        self.chrome_driver_path = chrome_driver_path
+        self.chrome_exe_path = chrome_exe_path
+
         self.driver = None
         self.wait = None
-        pass
 
     # END: Constructor
 
@@ -92,7 +95,6 @@ class BasicAutomation:
         """
 
         sleep(wait_time)
-        pass
 
     # END: Static Methods
 
@@ -119,15 +121,17 @@ class BasicAutomation:
             "excludeSwitches",
             ['enable-automation']
         )
+        if self.chrome_exe_path is not None:
+            chrome_options.binary_location = self.chrome_exe_path
 
         # Preparando chromedriver
         service = ChromeService(executable_path=self.chrome_driver_path)
+
         self.driver = webdriver.Chrome(service=service, options=chrome_options)
         self.wait = WebDriverWait(self.driver, self.selenium_wait_time)
 
         self.driver.get(self.selenium_initial_site)
         self.maximize_browser()
-        pass
 
     def close_driver(self):
         """
@@ -136,7 +140,6 @@ class BasicAutomation:
 
         try:
             self.driver.close()
-            pass
 
         finally:
             pass
@@ -147,7 +150,6 @@ class BasicAutomation:
         """
 
         self.driver.switch_to.default_content()
-        pass
 
     def switch_frame(self, xpath_nw_frame: str):
         """
@@ -156,9 +158,7 @@ class BasicAutomation:
         :param xpath_nw_frame: XPATH do novo frame.
         """
 
-        self.wait.until(ec.frame_to_be_available_and_switch_to_it(
-            (By.XPATH, xpath_nw_frame)))
-        pass
+        self.wait.until(ec.frame_to_be_available_and_switch_to_it((By.XPATH, xpath_nw_frame)))
 
     def reset_to_default_window(self):
         """
@@ -166,7 +166,6 @@ class BasicAutomation:
         """
 
         self.driver.switch_to.window(self.driver.window_handles[0])
-        pass
 
     def goto_last_window_handler(self):
         """
@@ -174,7 +173,6 @@ class BasicAutomation:
         """
 
         self.driver.switch_to.window(self.driver.window_handles[-1])
-        pass
 
     def wait_number_window(self, number_of_window: int):
         """
@@ -185,7 +183,6 @@ class BasicAutomation:
         """
 
         self.wait.until(ec.number_of_windows_to_be(number_of_window))
-        pass
 
     def goto_window_handler(self, index_window: int):
         """
@@ -197,7 +194,6 @@ class BasicAutomation:
         try:
             self.driver.switch_to.window(
                 self.driver.window_handles[index_window])
-            pass
 
         except Exception as error:
             raise error
@@ -210,7 +206,6 @@ class BasicAutomation:
         """
 
         self.driver.get(nw_endereco)
-        pass
 
     def back_to_initial_site(self):
         """
@@ -218,7 +213,6 @@ class BasicAutomation:
         """
 
         self.switch_url(self.selenium_initial_site)
-        pass
 
     def qtde_windows(self) -> int:
         """
@@ -229,7 +223,7 @@ class BasicAutomation:
 
         return int(len(self.driver.window_handles))
 
-    def verify_if_exists(self, xpath_to_verify: str):
+    def verify_if_exists(self, xpath_to_verify: str) -> bool:
         """
         Esse método verifica a existencia de um elemento pelo seu xpath.
 
@@ -237,12 +231,11 @@ class BasicAutomation:
         """
 
         try:
-            self.wait.until(ec.visibility_of_element_located(
-                (By.XPATH, xpath_to_verify)))
-            pass
+            self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_verify)))
+            return True
 
-        except Exception as error:
-            raise error
+        except:
+            return False
 
     def verify_invisibility(self, xpath_to_verify: str):
         """
@@ -251,9 +244,7 @@ class BasicAutomation:
         :param xpath_to_verify: XPATH do elemento.
         """
 
-        self.wait.until(ec.invisibility_of_element_located(
-            (By.XPATH, xpath_to_verify)))
-        pass
+        self.wait.until(ec.invisibility_of_element_located((By.XPATH, xpath_to_verify)))
 
     def click_by_xpath(self, xpath_to_click: str):
         """
@@ -262,10 +253,8 @@ class BasicAutomation:
         :param xpath_to_click: XPATH do elemento que deve ser clicado.
         """
 
-        self.wait.until(ec.visibility_of_all_elements_located(
-            (By.XPATH, xpath_to_click)))
+        self.wait.until(ec.visibility_of_all_elements_located((By.XPATH, xpath_to_click)))
         self.driver.find_element(By.XPATH, xpath_to_click).click()
-        pass
 
     def click_clickable_method_by_xpath(self, xpath_to_click: str):
         """
@@ -277,7 +266,6 @@ class BasicAutomation:
 
         self.wait.until(ec.element_to_be_clickable((By.XPATH, xpath_to_click)))
         self.driver.find_element(By.XPATH, xpath_to_click).click()
-        pass
 
     def select_by_value(self, xpath_to_select: str, value: str):
         """
@@ -289,7 +277,6 @@ class BasicAutomation:
 
         select = Select(self.driver.find_element(By.XPATH, xpath_to_select))
         select.select_by_value(value)
-        pass
 
     def send_by_xpath(self, xpath_to_send: str, key_to_send: str):
         """
@@ -299,11 +286,8 @@ class BasicAutomation:
         :param key_to_send: String que deve ser enviada ao elemento.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_send)))
-        self.driver.find_element(
-            By.XPATH, xpath_to_send).send_keys(key_to_send)
-        pass
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_send)))
+        self.driver.find_element(By.XPATH, xpath_to_send).send_keys(key_to_send)
 
     def deal_alert(self, confirm=True):
         """
@@ -320,7 +304,6 @@ class BasicAutomation:
                 alert.accept()
             else:
                 alert.dismiss()
-            pass
 
         finally:
             pass
@@ -332,10 +315,8 @@ class BasicAutomation:
         :param xpath_to_press: String com o caminho a ser enviado o comando.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_press)))
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_press)))
         self.driver.find_element(By.XPATH, xpath_to_press).send_keys(Keys.DOWN)
-        pass
 
     def press_up_input(self, xpath_to_press: str):
         """
@@ -344,10 +325,8 @@ class BasicAutomation:
         :param xpath_to_press: String com o caminho a ser enviado o comando.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_press)))
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_press)))
         self.driver.find_element(By.XPATH, xpath_to_press).send_keys(Keys.UP)
-        pass
 
     def press_left_input(self, xpath_to_press: str):
         """
@@ -356,10 +335,8 @@ class BasicAutomation:
         :param xpath_to_press: String com o caminho a ser enviado o comando.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_press)))
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_press)))
         self.driver.find_element(By.XPATH, xpath_to_press).send_keys(Keys.LEFT)
-        pass
 
     def press_right_input(self, xpath_to_press: str):
         """
@@ -368,11 +345,8 @@ class BasicAutomation:
         :param xpath_to_press: String com o caminho a ser enviado o comando.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_press)))
-        self.driver.find_element(
-            By.XPATH, xpath_to_press).send_keys(Keys.RIGHT)
-        pass
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_press)))
+        self.driver.find_element(By.XPATH, xpath_to_press).send_keys(Keys.RIGHT)
 
     def press_tab_input(self, xpath_to_press: str):
         """
@@ -381,10 +355,8 @@ class BasicAutomation:
         :param xpath_to_press: String com o caminho a ser enviado o comando.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_press)))
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_press)))
         self.driver.find_element(By.XPATH, xpath_to_press).send_keys(Keys.TAB)
-        pass
 
     def confirm_input(self, xpath_to_confirm: str):
         """
@@ -393,11 +365,8 @@ class BasicAutomation:
         :param xpath_to_confirm: String com o caminho a ser confirmado.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_confirm)))
-        self.driver.find_element(
-            By.XPATH, xpath_to_confirm).send_keys(Keys.ENTER)
-        pass
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_confirm)))
+        self.driver.find_element(By.XPATH, xpath_to_confirm).send_keys(Keys.ENTER)
 
     def clear_input(self, xpath_to_clear: str):
         """
@@ -406,10 +375,8 @@ class BasicAutomation:
         :param xpath_to_clear: XPATH do input que deve ser limpo.
         """
 
-        self.wait.until(ec.visibility_of_element_located(
-            (By.XPATH, xpath_to_clear)))
+        self.wait.until(ec.visibility_of_element_located((By.XPATH, xpath_to_clear)))
         self.driver.find_element(By.XPATH, xpath_to_clear).clear()
-        pass
 
     def get_attribute_by_xpath(self, xpath_element: str, attribute: str) -> str:
         """
@@ -422,11 +389,8 @@ class BasicAutomation:
         :return: Contéudo do atributo no elemento do HTML.
         """
 
-        self.wait.until(ec.presence_of_element_located(
-            (By.XPATH, xpath_element)))
-
-        return self.driver.find_element(By.XPATH, xpath_element)\
-            .get_attribute(attribute)
+        self.wait.until(ec.presence_of_element_located((By.XPATH, xpath_element)))
+        return self.driver.find_element(By.XPATH, xpath_element).get_attribute(attribute)
 
     def get_element(self, xpath_element: str) -> WebElement:
         """
@@ -437,8 +401,7 @@ class BasicAutomation:
         :return: Objeto do elemento HTML.
         """
 
-        self.wait.until(ec.visibility_of_all_elements_located(
-            (By.XPATH, xpath_element)))
+        self.wait.until(ec.visibility_of_all_elements_located((By.XPATH, xpath_element)))
         return self.driver.find_element(By.XPATH, xpath_element)
 
     def execute_js(self, script_js: str):
@@ -449,7 +412,6 @@ class BasicAutomation:
         """
 
         self.driver.execute_script(script_js)
-        pass
 
     def get_current_url(self) -> str:
         """
@@ -482,7 +444,6 @@ class BasicAutomation:
 
         try:
             self.driver.minimize_window()
-            pass
 
         finally:
             pass
@@ -494,7 +455,6 @@ class BasicAutomation:
 
         try:
             self.driver.maximize_window()
-            pass
 
         finally:
             pass
@@ -506,9 +466,7 @@ class BasicAutomation:
 
         self.minimize_browser()
         self.maximize_browser()
-        pass
 
     # END: Generic Selenium-based Methods
 
     # END: Automation #
-    pass
