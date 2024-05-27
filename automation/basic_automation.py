@@ -37,6 +37,8 @@ class BasicAutomation:
     chrome_driver_path: str
     chrome_exe_path: str
 
+    headless: bool
+
     driver: WebDriver
     wait: WebDriverWait
 
@@ -49,7 +51,8 @@ class BasicAutomation:
                  selenium_wait_time: int,
                  chrome_driver_directory: str = None,
                  chrome_driver_file: str = 'chromedriver.exe',
-                 chrome_exe_path: str = None
+                 chrome_exe_path: str = None,
+                 headless: bool = False
                  ):
         """
         Construtor da Classe.
@@ -59,6 +62,7 @@ class BasicAutomation:
         :param chrome_driver_directory: Caminho do chromedriver.
         :param chrome_driver_file: Nome do arquivo chromedriver.
         :param chrome_exe_path: Caminho do executável do Chrome.
+        :param headless: Indicativo se o navegador deve ser aberto em modo headless.
         """
 
         if chrome_driver_directory is None:
@@ -78,6 +82,8 @@ class BasicAutomation:
 
         self.chrome_driver_path = chrome_driver_path
         self.chrome_exe_path = chrome_exe_path
+
+        self.headless = headless
 
         self.driver = None
         self.wait = None
@@ -121,6 +127,8 @@ class BasicAutomation:
             "excludeSwitches",
             ['enable-automation']
         )
+        if self.headless:
+            chrome_options.add_argument('--headless')
         if self.chrome_exe_path is not None:
             chrome_options.binary_location = self.chrome_exe_path
 

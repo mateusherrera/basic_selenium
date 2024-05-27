@@ -34,7 +34,12 @@ if __name__ == '__main__':
         '/html/body/div[1]/div[4]/main/div[2]/div/div[2]/turbo-frame/div/div[2]/ul/li[1]/div[1]/div[1]/h3/a'
     )
 
-    github_automation = BasicAutomation(selenium_initial_site, selenium_wait_time, chrome_exe_path=chrome_exe_path)
+    github_automation = BasicAutomation(
+        selenium_initial_site
+        , selenium_wait_time
+        , chrome_exe_path=chrome_exe_path
+        # , headless=True
+    )
     github_automation.start_browser()
 
     github_automation.driver.get(f'{github_automation.selenium_initial_site}{github_user}')

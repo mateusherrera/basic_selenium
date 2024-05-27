@@ -36,9 +36,10 @@ class GithubAutomation(BasicAutomation):
         chrome_exe_path = r'C:\ini\chrome-win64\chrome.exe'
 
         super().__init__(
-            selenium_initial_site,
-            selenium_wait_time,
-            chrome_exe_path=chrome_exe_path
+            selenium_initial_site
+            , selenium_wait_time
+            , chrome_exe_path=chrome_exe_path
+            # , headless=True
         )
 
     def get_first_repository(self, user: str) -> list:

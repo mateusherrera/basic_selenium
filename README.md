@@ -11,7 +11,8 @@ __init__(self,
         selenium_wait_time: int,
         chrome_driver_directory: str = None,
         chrome_driver_file: str = 'chromedriver.exe',
-        chrome_exe_path: str = None
+        chrome_exe_path: str = None,
+        headless: bool = False
         )
 ```
 
@@ -22,6 +23,7 @@ __init__(self,
 - `chrome_driver_directory`: Caminho para a pasta que está o driver do chrome. Caso esse argumento seja omitido, o caminho descrito na variável de ambiente `PyPath` será utilizada.
 - `chrome_driver_file`: Nome do arquivo de driver do chrome. Caso seja omitido, será `chromedriver.exe`.
 - `chrome_exe_path`: Caminho do executável de um chrome específico.
+- `headless`: Modo de execução do selenium, por padrão o navegador será aberto.
 
 **Exemplo de uso:**
 
@@ -31,7 +33,8 @@ automation = Automation(
     5,
     chrome_driver_directory='caminho/para/o/arquivo',
     chrome_driver_file='nome_do_arquivo.exe',
-    chrome_exe_path='caminho/para/executavel/do/chrome'
+    chrome_exe_path='caminho/para/executavel/do/chrome',
+    headless=True
 )
 ```
 
