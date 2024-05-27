@@ -3,6 +3,7 @@ Módulo para métodos genéricos que agilizam o desenvolvimento de automações 
 a biblioteca Selenium.
 
 :author: Mateus Herrera Gobetti Borges
+:github: mateusherrera
 :date: 2024-04-26
 """
 

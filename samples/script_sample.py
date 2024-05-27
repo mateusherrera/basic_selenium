@@ -2,7 +2,8 @@
 Amostra de script para utilização da classe automation.
 
 :author: Mateus Herrera Gobetti Borges
-:date: 2021-05-27
+:github: mateusherrera
+:date: 2024-05-27
 """
 
 # Adicionando o diretório pai ao path
