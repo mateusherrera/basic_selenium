@@ -28,7 +28,7 @@ if __name__ == '__main__':
     selenium_wait_time = 5
     chrome_exe_path = r'C:\ini\chrome-win64\chrome.exe'
 
-    github_user = 'mateusherrera'
+    github_user = input('Digite um nome de usuário do Github: ')
 
     xpath_repositories = '/html/body/div[1]/div[4]/main/div[1]/div/div/div[2]/div/nav/a[2]'
     xpath_first_repo = (
