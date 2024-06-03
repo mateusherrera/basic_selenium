@@ -204,12 +204,20 @@ Esse método verifica a existencia de um elemento pelo seu xpath.
 **Parâmetros:**
 - `xpath_to_verify`: XPATH do elemento.
 
+**Retorno:**
+- True se existe, False se não existe.
+
 **Exemplo de uso:**
 
 ```python
 automation = Automation(**params)
 automation.start_browser()
-automation.verify_if_exists('xpath/do/elemento')
+exist = automation.verify_if_exists('xpath/do/elemento')
+
+if exist:
+    print('Existe')
+else:
+    print('Não existe')
 ```
 
 ### `verify_invisibility(self, xpath_to_verify: str) -> None`
