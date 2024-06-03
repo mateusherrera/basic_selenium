@@ -237,6 +237,7 @@ class BasicAutomation:
         Esse método verifica a existencia de um elemento pelo seu xpath.
 
         :param xpath_to_verify: XPATH do elemento.
+        :return: True se existe, False se não existe.
         """
 
         try:
