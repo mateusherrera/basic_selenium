@@ -66,7 +66,8 @@ if __name__ == '__main__':
     github_automation = GithubAutomation()
     github_automation.start_browser()
 
-    result = github_automation.get_first_repository('mateusherrera')
+    gh_username = input('Digite um nome de usuário do Github: ')
+    result = github_automation.get_first_repository(gh_username)
 
     os.system('cls')
     print(f'Link do primeiro repositório na página do perfil: {result}')
