@@ -4,6 +4,15 @@
 
 A classe `BasicAutomation` fornece métodos para agilizar o desenvolvimento de automações com Selenium.
 
+## Para utilizar
+Em seu ambiente python instale:
+```
+pip install git+https://github.com/mateusherrera/basic_selenium
+```
+Caso prefira instalar localmente, clone o repositório onde quiser, e instale no seu ambiente python:
+```
+pip install /caminho/para/repositorio/basic_selenium
+```
 ##
 ```
 __init__(self,
